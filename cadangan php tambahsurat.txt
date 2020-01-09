@@ -1,0 +1,37 @@
+require_once("config.php");
+
+if(isset($_POST['tambah'])){
+
+    // filter data yang diinputkan
+    $nama = filter_input(INPUT_POST, 'nama', FILTER_SANITIZE_STRING);
+    $namasurat = filter_input(INPUT_POST, 'namasurat', FILTER_SANITIZE_STRING);
+    $nomorsurat = filter_input(INPUT_POST, 'nomorsurat', FILTER_SANITIZE_STRING);
+    $kategori = filter_input(INPUT_POST, 'kategori', FILTER_SANITIZE_STRING);
+    $tanggal = filter_input(INPUT_POST, 'tanggal', FILTER_UNSAFE_RAW);
+    $foto = filter_input(INPUT_POST, 'foto', FILTER_UNSAFE_RAW);
+
+    // menyiapkan query
+    $sql = "INSERT INTO surat (nama, namasurat, nomorsurat, kategori, tanggal, foto) 
+            VALUES (:nama, :namasurat, :nomorsurat, :kategori, ;tanggal, :foto)";
+    $stmt = $db->prepare($sql);
+
+    // bind parameter ke query
+    $params = array(
+        ":nama" => $nama,
+        ":namasurat" => $namasurat,
+        ":nomorsurat" => $nomorsurat,
+        ":kategori" => $kategori,
+        ":tanggal" => $tanggal,
+        ":foto" => $foto
+    );
+
+    // eksekusi query untuk menyimpan ke database
+    $saved = $stmt->execute($params);
+
+    // jika query simpan berhasil, maka user sudah terdaftar
+    // maka alihkan ke halaman login
+    if($saved) header("Location: tampilsurat.php");
+}
+else if(isset($_POST['back'])){
+    header("Location:tampilsurat.php");
+}
